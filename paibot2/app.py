@@ -1,16 +1,41 @@
 from flask import Flask, request, jsonify
 import logging
 import re
+import json
+from typing import Dict
+
 import requests
+from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
 logging.basicConfig(level=logging.INFO)
 
 
+def _scrape_company_html(slug: str) -> Dict:
+    """Scrape company info from annuaire-entreprises page."""
+    url = f"https://annuaire-entreprises.data.gouv.fr/entreprise/{slug}"
+    logging.info("scraping HTML %s", url)
+    resp = requests.get(url, timeout=10)
+    resp.raise_for_status()
+    soup = BeautifulSoup(resp.text, "html.parser")
+    script = soup.find("script", id="__NEXT_DATA__")
+    if not script or not script.string:
+        raise ValueError("no data found in page")
+    data = json.loads(script.string)
+    info = data.get("props", {}).get("pageProps", {})
+    for key in ("entreprise", "enterprise", "etablissement"):
+        if isinstance(info.get(key), dict):
+            return info[key]
+    return info
+
+
 def _fetch_company_info(query: str) -> dict:
-    """Lookup a company by name, SIREN or SIRET using the
-    entreprise.data.gouv.fr API.
+    """Lookup a company by name, SIREN or SIRET.
+
+    This tries the official API when a numeric identifier is provided.
+    For text queries, it first scrapes the public web page and falls back
+    to the SIRENE search API if scraping fails.
     """
     norm = re.sub(r"\s+", "", query)
     if re.fullmatch(r"\d{14}", norm):
@@ -24,15 +49,21 @@ def _fetch_company_info(query: str) -> dict:
         resp.raise_for_status()
         return resp.json().get("unite_legale", {})
     else:
-        url = "https://entreprise.data.gouv.fr/api/sirene/v3/unites_legales"
-        resp = requests.get(
-            url, params={"nom_raison_sociale": query, "per_page": 1}, timeout=10
-        )
-        resp.raise_for_status()
-        items = resp.json().get("unites_legales") or []
-        if not items:
-            raise ValueError("not found")
-        return items[0]
+        try:
+            return _scrape_company_html(norm)
+        except Exception:
+            logging.exception("HTML scrape failed, fallback to API")
+            url = "https://entreprise.data.gouv.fr/api/sirene/v3/unites_legales"
+            resp = requests.get(
+                url,
+                params={"nom_raison_sociale": query, "per_page": 1},
+                timeout=10,
+            )
+            resp.raise_for_status()
+            items = resp.json().get("unites_legales") or []
+            if not items:
+                raise ValueError("not found")
+            return items[0]
 
 
 @app.post("/scrape")

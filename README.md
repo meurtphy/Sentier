@@ -7,7 +7,7 @@ Picasee fait correspondre associations et entreprises à impact social.
 1. **Prérequis** : Python 3.12+.
 2. Installez les dépendances nécessaires :
    ```bash
-   pip install flask requests geopy pandas scikit-learn matplotlib pyyaml
+   pip install flask requests geopy pandas scikit-learn matplotlib pyyaml beautifulsoup4
    ```
 
 ## Lancer l'application
