@@ -15,7 +15,7 @@ Picasee fait correspondre associations et entreprises à impact social.
 Lancez le microservice d'IA puis l'API principale :
 
 ```bash
-python paibot2/app.py &  # microservice complémentaire
+python paibot2/app.py &  # microservice d'enrichissement dynamique
 python engine/app.py
 ```
 
@@ -23,6 +23,7 @@ L'application expose plusieurs endpoints :
 - `/` : interface HTML (dossier `frontend/`).
 - `/api/match` : POST avec un profil JSON pour obtenir les entreprises compatibles.
 - `/api/like` : POST pour enregistrer un like/dislike.
+- `/scrape` : enrichit dynamiquement une entreprise à partir d'un nom ou d'un numéro.
 
 ## Tests
 
