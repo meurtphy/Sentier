@@ -117,40 +117,40 @@
   <button id="back-dashboard" onclick="window.location.href='dashboard.html'">Retour au dashboard</button>
 
   <script>
-    const companies = [
-      {
-        name: "GreenTech",
-        sector: "Énergies renouvelables",
-        description: "Partenaire actif dans la transition écologique.",
-        logo: "https://via.placeholder.com/100"
-      },
-      {
-        name: "StartCare",
-        sector: "Santé",
-        description: "Soutient les actions à impact humain.",
-        logo: "https://via.placeholder.com/100"
-      },
-      {
-        name: "Build4All",
-        sector: "BTP solidaire",
-        description: "Investit dans des projets d’infrastructure inclusifs.",
-        logo: "https://via.placeholder.com/100"
-      }
-    ];
-
+    let companies = [];
     let current = 0;
 
     function showCompany(index) {
       const company = companies[index];
       document.getElementById("name").textContent = company.name;
-      document.getElementById("sector").textContent = company.sector;
-      document.getElementById("description").textContent = company.description;
-      document.getElementById("logo").src = company.logo;
+      document.getElementById("sector").textContent = company.engagement?.join(', ') || '';
+      document.getElementById("description").textContent = company.reason || '';
+      document.getElementById("logo").src = "https://via.placeholder.com/100";
+    }
+
+    async function loadMatches() {
+      const profile = localStorage.getItem('profile');
+      if (!profile) return;
+      try {
+        const res = await fetch('/api/match', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: profile
+        });
+        companies = await res.json();
+        if (companies.length) {
+          showCompany(0);
+        } else {
+          document.getElementById("company-card").style.display = "none";
+          document.getElementById("no-more").style.display = "block";
+        }
+      } catch (e) {
+        console.error('Erreur API match', e);
+      }
     }
 
     function swipe(liked) {
       const company = companies[current];
-
       fetch('/api/like', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -167,7 +167,7 @@
       }
     }
 
-    showCompany(current);
+    window.onload = loadMatches;
   </script>
 </body>
 </html>

@@ -1,11 +1,25 @@
 # app.py
 import requests  # en haut du fichier
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from datetime import datetime
 from match import match  # Assure-toi que cette fonction existe et utilise tous les blocs
+import os
 
+FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend")
 
 app = Flask(__name__)
+
+@app.get("/")
+def serve_index():
+    """Point d'entrée HTML"""
+    return send_from_directory(FRONTEND_DIR, "index.html")
+
+@app.get("/<path:filename>")
+def serve_static(filename):
+    """Sert les fichiers frontend"""
+    return send_from_directory(FRONTEND_DIR, filename)
+
+
 SCRAPER_BASE = "http://localhost:8000"   # ton micro-service scrap/PDF
 
 @app.post("/api/enrich-company")
