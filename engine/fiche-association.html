@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fiche Association - Picasee</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f6f9fc;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.08);
+    }
+    h1 { text-align: center; margin-bottom: 2rem; }
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 1.2rem;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 0.8rem;
+      margin-top: 0.4rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    input[type="file"] {
+      padding: 0.4rem;
+    }
+    .checkbox-group {
+      margin-top: 1rem;
+    }
+    button {
+      margin-top: 2rem;
+      background-color: #007bff;
+      color: white;
+      padding: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      width: 100%;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Compléter ma fiche association</h1>
+    <form id="fiche-association-form">
+      <label for="name">Nom de l'association *</label>
+      <input type="text" id="name" name="name" required />
+
+      <label for="ape">Code APE / Secteur *</label>
+      <input type="text" id="ape" name="ape" required />
+
+      <label for="description">Description *</label>
+      <textarea id="description" name="description" rows="4" required></textarea>
+
+      <label for="siret">SIRET *</label>
+      <input type="text" id="siret" name="siret" required />
+
+      <label for="website">Site internet</label>
+      <input type="url" id="website" name="website" />
+
+      <label for="certifications">Certifications & labels</label>
+      <input type="text" id="certifications" name="certifications" placeholder="Ex : ESUS, ISO, etc." />
+
+      <label for="budget">Budget annuel (€)</label>
+      <input type="number" id="budget" name="budget" />
+
+      <label for="address">Adresse *</label>
+      <input type="text" id="address" name="address" required />
+
+      <label for="city">Ville *</label>
+      <input type="text" id="city" name="city" required />
+
+      <label for="postal">Code Postal *</label>
+      <input type="text" id="postal" name="postal" required />
+
+      <label for="medias">Médias (images, vidéos, audio)</label>
+      <input type="file" id="medias" name="medias" multiple accept="image/*,video/*,audio/*" />
+
+      <label for="socials">Réseaux sociaux (liens)</label>
+      <input type="url" name="facebook" placeholder="Facebook">
+      <input type="url" name="instagram" placeholder="Instagram">
+      <input type="url" name="linkedin" placeholder="LinkedIn">
+      <input type="url" name="tiktok" placeholder="TikTok">
+      <input type="url" name="pinterest" placeholder="Pinterest">
+
+      <div class="checkbox-group">
+        <label>
+          <input type="checkbox" required />
+          Je certifie que cette association remplit les critères d’intérêt général
+        </label>
+      </div>
+
+      <button type="submit">Enregistrer la fiche</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('fiche-association-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const form = new FormData(this);
+      const data = {};
+      form.forEach((value, key) => {
+        if (data[key]) {
+          if (!Array.isArray(data[key])) data[key] = [data[key]];
+          data[key].push(value);
+        } else {
+          data[key] = value;
+        }
+      });
+      console.log("Fiche association prête :", data);
+      alert("Fiche enregistrée (voir console pour le JSON).");
+    });
+  </script>
+</body>
+</html>

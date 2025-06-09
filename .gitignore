@@ -1,0 +1,14 @@
+venv# Ignore Python environments & cache
+venv/
+__pycache__/
+*.pyc
+
+# Ignore data & logs
+*.jsonl
+*.csv
+*.log
+
+# Ignore IDE / editor config
+.vscode/
+.idea/
+.DS_Store

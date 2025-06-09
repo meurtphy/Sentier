@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Créer un profil - Picasee</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f2f4f8;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: auto;
+      background: #fff;
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 2rem;
+    }
+
+    label {
+      font-weight: 600;
+      margin-top: 1.2rem;
+      display: block;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 0.9rem;
+      margin-top: 0.4rem;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 1rem;
+      background: #fafafa;
+    }
+
+    .btn {
+      margin-top: 2rem;
+      background: #0077ff;
+      color: white;
+      border: none;
+      padding: 1rem;
+      font-weight: 600;
+      font-size: 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: #005fd1;
+    }
+
+    #output {
+      background: #f9f9f9;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      overflow-x: auto;
+    }
+
+    .info-box {
+      display: none;
+      border-left: 4px solid #0077ff;
+      background: #eef6ff;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-top: 1.2rem;
+    }
+
+    .ia-button {
+      margin-top: 0.8rem;
+      background: #00b894;
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .ia-button:hover {
+      background: #019874;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Créer votre profil</h1>
+    <form id="profile-form">
+      <label for="user-type">Vous êtes :</label>
+      <select id="user-type" name="type" required>
+        <option value="">-- Choisissez --</option>
+        <option value="association">Association</option>
+        <option value="entreprise">Entreprise</option>
+      </select>
+
+      <label for="email">Adresse email *</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="password">Mot de passe *</label>
+      <input type="password" id="password" name="password" required />
+
+      <label for="name">Nom complet *</label>
+      <input type="text" id="name" name="name" required />
+
+      <!-- Bloc entreprise -->
+      <div id="enterprise-block" style="display:none">
+        <label for="company-name">Nom de l’entreprise *</label>
+        <input type="text" id="company-name" />
+
+        <button type="button" class="ia-button" id="btn-ai">🤖 Auto-remplir avec l’IA</button>
+
+        <label for="siret">SIRET</label>
+        <input type="text" id="siret" />
+
+        <label for="naf">Code APE / NAF</label>
+        <input type="text" id="naf" />
+
+        <label for="adresse">Adresse</label>
+        <input type="text" id="adresse" />
+      </div>
+
+      <!-- Bloc besoins -->
+      <div id="needs-block">
+        <label for="constraints">Besoins (séparés par des virgules)</label>
+        <input type="text" id="constraints" name="constraints" placeholder="ex : hébergement, financier, logistique" />
+
+        <label for="budget">Budget nécessaire (€)</label>
+        <input type="number" id="budget" name="budget_needed" />
+      </div>
+
+      <label>
+        <input type="checkbox" required />
+        En continuant, j’accepte la politique de confidentialité et les CGU.
+      </label>
+
+      <button type="submit" class="btn">Continuer</button>
+    </form>
+
+    <pre id="output" hidden></pre>
+  </div>
+
+  <script>
+    const userTypeSelect = document.getElementById("user-type");
+    const enterpriseBlock = document.getElementById("enterprise-block");
+    const output = document.getElementById("output");
+    const aiBtn = document.getElementById("btn-ai");
+
+    userTypeSelect.addEventListener("change", () => {
+      enterpriseBlock.style.display = userTypeSelect.value === "entreprise" ? "block" : "none";
+    });
+
+    aiBtn.addEventListener("click", async () => {
+      const query = document.getElementById("company-name").value.trim();
+      if (!query) return alert("Indiquez un nom d'entreprise ou un SIRET");
+
+      aiBtn.textContent = "🔍 Recherche en cours...";
+      aiBtn.disabled = true;
+
+      try {
+        const res = await fetch("/api/enrich-company", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query })
+        });
+        const data = await res.json();
+
+        document.getElementById("siret").value = data.siret || "";
+        document.getElementById("naf").value = data.naf_ape || "";
+        document.getElementById("adresse").value = data.adresse_siege || "";
+
+        aiBtn.textContent = "✅ Infos ajoutées !";
+      } catch (e) {
+        alert("Erreur lors de la récupération des données.");
+        aiBtn.textContent = "🤖 Auto-remplir avec l’IA";
+      } finally {
+        aiBtn.disabled = false;
+      }
+    });
+
+    document.getElementById("profile-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const form = e.target;
+      const type = userTypeSelect.value;
+
+      const json = {
+        type,
+        email: form.email.value,
+        password: form.password.value,
+        name: form.name.value,
+        constraints: form.constraints.value.split(',').map(s => s.trim()).filter(Boolean),
+        budget_needed: parseFloat(form.budget.value) || 0,
+        siret: document.getElementById("siret").value,
+        naf: document.getElementById("naf").value,
+        adresse: document.getElementById("adresse").value
+      };
+
+      output.hidden = false;
+      output.textContent = JSON.stringify(json, null, 2);
+
+      setTimeout(() => {
+        if (type === "association") {
+          window.location.href = "fiche-association.html";
+        } else if (type === "entreprise") {
+          window.location.href = "creer-action.html";
+        } else {
+          alert("Type d'utilisateur invalide.");
+        }
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

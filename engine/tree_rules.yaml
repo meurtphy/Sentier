@@ -1,0 +1,44 @@
+# Arbre de décision converti en logique lisible
+- has_finance_offer <= 0.50
+  - need_overlap_ratio <= 0.59
+    - budget_ratio <= 0.12
+      - class: False
+    - budget_ratio >  0.12
+      - has_finance_need <= 0.50
+        - budget_ratio <= 1.77
+          - class: False
+        - budget_ratio >  1.77
+          - class: True
+      - has_finance_need >  0.50
+        - budget_ratio <= 0.66
+          - class: False
+        - budget_ratio >  0.66
+          - class: True
+  - need_overlap_ratio >  0.59
+    - budget_ratio <= 0.91
+      - class: True
+    - budget_ratio >  0.91
+      - budget_ratio <= 1.13
+        - class: False
+      - budget_ratio >  1.13
+        - class: True
+- has_finance_offer >  0.50
+  - need_overlap_ratio <= 0.42
+    - budget_ratio <= 0.46
+      - budget_ratio <= 0.20
+        - class: True
+      - budget_ratio >  0.20
+        - budget_ratio <= 0.30
+          - class: False
+        - budget_ratio >  0.30
+          - class: False
+    - budget_ratio >  0.46
+      - budget_ratio <= 1.77
+        - class: True
+      - budget_ratio >  1.77
+        - budget_ratio <= 1.94
+          - class: False
+        - budget_ratio >  1.94
+          - class: True
+  - need_overlap_ratio >  0.42
+    - class: False

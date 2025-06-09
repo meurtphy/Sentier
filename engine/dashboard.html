@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard Association - Picasee</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: #f4f5f7;
+      color: #111;
+    }
+    header {
+      background: #0077ff;
+      color: white;
+      padding: 1rem 2rem;
+      font-size: 1.4rem;
+      text-align: center;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+    .card h3 {
+      margin: 0 0 0.5rem 0;
+    }
+    .card p {
+      font-size: 0.95rem;
+      color: #555;
+    }
+    .card button {
+      margin-top: 1rem;
+      background: #0077ff;
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .section-title {
+      margin-top: 3rem;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 0.3rem;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>Tableau de bord - Association</header>
+
+<div class="container">
+
+  <div class="grid">
+    <div class="card">
+      <h3>Créer une nouvelle action</h3>
+      <p>Soumettez une initiative à financer avec ses impacts prévus.</p>
+      <button onclick="location.href='fiche-association.html'">Créer une action</button>
+    </div>
+
+    <div class="card">
+      <h3>Modifier mon profil</h3>
+      <p>Mettez à jour votre fiche d’association et vos besoins.</p>
+      <button onclick="location.href='fiche-association.html'">Modifier ma fiche</button>
+    </div>
+
+    <div class="card">
+      <h3>Consulter mes matchs</h3>
+      <p>Accédez aux entreprises compatibles avec votre fiche.</p>
+      <button onclick="location.href='match.html'">Trouver une entreprise</button>
+    </div>
+  </div>
+
+  <h2 class="section-title">Mes actions en cours</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>Atelier numérique - Quartier Ouest</h3>
+      <p>Financement restant : 1 200€<br>Impact prévu : 80 jeunes formés</p>
+      <button>Voir</button>
+    </div>
+    <!-- Tu pourras injecter dynamiquement les autres ici -->
+  </div>
+
+  <h2 class="section-title">Mes actions terminées</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>Distribution alimentaire - Été 2023</h3>
+      <p>Financé à 100%<br>Impact : 250 familles aidées</p>
+      <button>Rapport d’impact</button>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
