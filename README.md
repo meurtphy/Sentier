@@ -5,14 +5,17 @@ Picasee fait correspondre associations et entreprises à impact social.
 ## Installation
 
 1. **Prérequis** : Python 3.12+.
-2. Installez les dépendances :
+2. Installez les dépendances nécessaires :
    ```bash
-   pip install flask requests
+   pip install flask requests geopy pandas scikit-learn matplotlib pyyaml
    ```
 
 ## Lancer l'application
 
+Lancez le microservice d'IA puis l'API principale :
+
 ```bash
+python paibot2/app.py &  # microservice complémentaire
 python engine/app.py
 ```
 
